@@ -1,0 +1,122 @@
+1. Arithmetic Unit – Adder/Subtractor
+Core: A ripple-carry binary adder (built from full adders for each bit).
+
+Mode control (M):
+
+When M = 0 → perform addition.
+
+When M = 1 → perform subtraction using two’s complement trick:
+
+B inputs are XOR ’d with M to invert when subtracting.
+
+The initial carry-in (C₀) = M.
+
+Operation:
+
+Result = 𝐴+𝐵⊕𝑀+𝑀
+
+Result=A+B⊕M+M
+
+If M=0: it's A + B.
+
+If M=1: it's A – B (i.e., A + ¬B + 1). 
+
+This way, one adder handles both add and subtract. Use the final carry-out as the carry/borrow flag.
+
+2. Logic Unit
+For bitwise operations:
+
+AND: A ∧ B
+
+OR: A ∨ B
+
+NOT: ¬A (unary; ignore B or treat B as don’t care)
+
+Each bit is processed independently using simple gates. 
+
+3. Multiplexer (MUX) for Output Selection
+All outputs from the arithmetic unit and logic unit feed an n-bit wide multiplexer.
+
+Control signals decode the desired operation:
+
+e.g., 3-bit Op-code:
+
+000 = ADD, 001 = SUB,
+
+010 = AND, 011 = OR, 100 = NOT, etc. 
+
+4. Status Flags
+Zero (Z): Output is zero (e.g., via an OR-tree and inverter).
+
+Carry/Borrow (C): Final carry-out from adder.
+
+Overflow (V): Detect via XOR between final carry and previous carry.
+
+Negative (N): Most significant bit of the result (sign bit). 
+
+5. Putting It All Together
+  1.Inputs:
+
+Operands: A (n-bit), B (n-bit)
+
+Mode bits: M (arithmetic vs logic) & Op-code bits
+
+  2.Arithmetic path:
+
+B ⊕ M → fed into ripple-carry adder
+
+Carry-in = M
+
+  3.Logic path:
+
+Independent AND, OR, NOT gates
+
+  4.Output selection:
+
+n-bit MUX selects between arithmetic result and chosen logic result
+
+  5.Flag generation:
+
+Carry-out → C
+
+Overflow logic → V
+
+MSB → N
+
+Zero detect → Z
+
+4‑bit Example Circuit
+Use four full-adders for 4-bit operations.
+
+XOR each B-bit with M.
+
+Use a simple 4‑to‑1 MUX for logic ops and another 2‑to‑1 MUX between arithmetic vs logic outputs.
+
+Select lines: M + 2 control bits = 3 total. 
+
+Summary Table
+Operation	Mode (M)	Op-code	B XOR?	Carry-in	Result Source
+ADD	0	000	No	0	Arithmetic
+SUB	1	001	Yes	1	Arithmetic
+AND	1	010	—	—	Logic AND
+OR	1	011	—	—	Logic OR
+NOT	1	100	—	—	Logic NOT
+
+Bonus: Expandability & Efficiency
+To scale beyond 4 bits, just add more full-adders (ripple-carry).
+
+For faster arithmetic, replace ripple-carry with a carry‑lookahead adder. 
+Reddit
++12
+https://www.codershelpline.com
++12
+Reddit
++12
+
+🛠️ Implementation Tips
+Prototype: Use Logisim or breadboard with TTL chips (e.g., 74LS283 for adders, 74LS08 for AND, 74LS32 for OR).
+
+Control unit: Can be a small ROM or simple combinational decoder from Op-codes.
+
+Flags: Useful for branching and decision-making in CPU-like systems.
+
