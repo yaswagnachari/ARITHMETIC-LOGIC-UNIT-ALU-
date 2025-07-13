@@ -1,0 +1,24 @@
+module sync ram (
+    input wire clk,             // Clock signal
+    input wire we,              // Write enable
+    input wire [3:0] addr,      // 4-bit address for 16 locations
+    input wire [7:0] din,       // 8-bit data input
+    output reg [7:0] dout       // 8-bit data output
+);
+
+    // Declare RAM as a 16x8 array
+    reg [7:0] mem [15:0];
+
+    // Synchronous Write
+    always @(posedge clk) begin
+        if (we) begin
+            mem[addr] <= din;
+        end
+    end
+
+    // Asynchronous Read
+    always @(*) begin
+        dout = mem[addr];
+    end
+
+endmodule
